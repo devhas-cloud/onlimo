@@ -1,0 +1,7 @@
+venv/
+log/
+logs/*.log
+config/*.db
+backend/__pycache__/
+supervisord.pid
+csv/*.csv

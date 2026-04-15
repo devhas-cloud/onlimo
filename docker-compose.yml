@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  onlimo:
+    build: .
+    container_name: onlimo
+    network_mode: "host"
+    volumes:
+      - ./:/app
+      - /var/www/html/FTP:/app/csv
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always

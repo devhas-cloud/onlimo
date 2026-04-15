@@ -1,0 +1,140 @@
+<!-- CONFIGURATION SECTION -->
+<h2 class="page-title">Konfigurasi Sistem</h2>
+    <p class="page-subtitle">Kelola pengaturan aplikasi, database, API, dan device</p>
+
+    <div id="config-alert-container" style="margin-bottom: 1rem;"></div>
+
+    <!-- Config Form -->
+    <div class="table-container" style="padding: 2rem;">
+        <form id="configForm">
+
+            <!-- General Configuration  -->
+            <div class="config-form-section">
+                <h5>
+                    <i class="bi bi-gear"></i> Umum
+                </h5>
+                <div class="config-form-grid">
+                    <div class="config-form-group">
+                        <label class="form-label">Parameter Dashboard</label>
+                        <input type="text" class="form-control" id="config-parameter" placeholder="datetime,pH,tds,cod">
+                        <small>Parameter yang ditampilkan di dashboard (comma-separated)</small>
+                        <small style="display: block; margin-top: 0.5rem; color: #6366f1; font-weight: 500;">
+                            <i class="bi bi-info-circle"></i> Parameter tersedia: datetime, pH, orp, tds, conduct, do, salinity, nh3n, battery, depth, flow, tflow, turbidity, tss, cod, bod, no3, wtemp, wpress
+                        </small>
+                    </div>
+                </div>
+            </div>
+           
+            <!-- DLH Configuration -->
+            <div class="config-form-section">
+                <h5>
+                    <i class="bi bi-cloud-upload"></i> DLH API
+                </h5>
+                <div class="config-form-grid">
+
+                    <div class="config-form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" id="config-dlh-status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <small>Status pengiriman data ke DLH API</small>
+                    </div>
+                    
+                    <div class="config-form-group">
+                        <label class="form-label">API URL</label>
+                        <input type="text" class="form-control" id="config-dlh-api-url" placeholder="https://api.dlh.go.id/...">
+                        <small>URL endpoint API DLH untuk pengiriman data</small>
+                    </div>
+                    
+                    <!-- Api Key dan Secret -->
+                    <div class="config-form-group">
+                        <label class="form-label">API Key</label>
+                        <input type="text" class="form-control" id="config-dlh-api-key" placeholder="API_KEY">
+                        <small>API Key untuk autentikasi ke DLH API</small>
+                    </div>
+                    <div class="config-form-group">
+                        <label class="form-label">API Secret</label>
+                        <input type="text" class="form-control" id="config-dlh-api-secret" placeholder="API_SECRET">
+                        <small>API Secret untuk autentikasi ke DLH API</small>
+                    </div>
+
+                    <div class="config-form-group">
+                        <label class="form-label">UID</label>
+                        <input type="text" class="form-control" id="config-dlh-uid" placeholder="UID-XXXXX">
+                        <small>ID Stasiun yang terdaftar di sistem DLH</small>
+                    </div>
+                   
+                </div>
+            </div>
+
+            <!-- HAS API Configuration -->
+            <div class="config-form-section">
+                <h5>
+                    <i class="bi bi-cloud-upload"></i> HAS API
+                </h5>
+                <div class="config-form-grid">
+                    <div class="config-form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" id="config-has-status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <small>Status pengiriman data ke HAS API</small>
+                    </div>
+                    <div class="config-form-group">
+                        <label class="form-label">API URL</label>
+                        <input type="text" class="form-control" id="config-has-api-url" placeholder="https://has.example.com/api">
+                        <small>URL endpoint API HAS</small>
+                    </div>
+                    
+                    <div class="config-form-group">
+                        <label class="form-label">API Logs URL</label>
+                        <input type="text" class="form-control" id="config-has-logs-api-url" placeholder="https://has.example.com/logs">
+                        <small>URL API untuk log HAS</small>
+                    </div>
+
+                </div>
+                <br>
+                <div class="config-form-grid">
+
+                    <div class="config-form-group">
+                        <label class="form-label">Device ID</label>
+                        <input type="text" class="form-control" id="config-device-id" placeholder="DEVICE001">
+                        <small>ID unik perangkat untuk identifikasi</small>
+                    </div>
+
+                    <div class="config-form-group">
+                        <label class="form-label">Token</label>
+                        <input type="password" class="form-control" id="config-has-token-api">
+                        <small>Token autentikasi untuk HAS API</small>
+                    </div>
+                
+                    
+
+                </div>
+
+                <br>
+                <div class="config-form-grid">
+
+                    <div class="config-form-group">
+                        <label class="form-label">Fields (comma-separated)</label>
+                        <input type="text" class="form-control" id="config-has-fields" placeholder="datetime,pH,cod,tss">
+                        <small>Parameter yang dikirim ke HAS</small>
+                        <small style="display: block; margin-top: 0.5rem; color: #6366f1; font-weight: 500;">
+                            <i class="bi bi-info-circle"></i> Fields tersedia: datetime, pH, orp, tds, conduct, do, salinity, nh3n, battery, depth, flow, tflow, turb, tss, cod, bod, no3, wtemp, wpress
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+
+        <!-- Config Actions -->
+        <div class="config-actions">
+            <button class="filter-btn" onclick="saveConfiguration()">
+                <i class="bi bi-check-circle"></i> Simpan Konfigurasi
+            </button>
+        </div>
+    </div>
