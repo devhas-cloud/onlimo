@@ -82,6 +82,7 @@ COLUMN_MAP = {
 
     "temperature - measured": "wtemp",
     "temperat - measured": "wtemp",
+    "temperature": "wtemp",
 
     "wpress - measured": "wpress",
     
