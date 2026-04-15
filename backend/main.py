@@ -50,6 +50,8 @@ COLUMN_MAP = {
 
 
     "do - measured": "do",
+    "dissolved oxygen - measured": "do",
+
     "salinity - measured": "salinity",
 
     "nh3n - measured": "nh3n",
@@ -61,7 +63,9 @@ COLUMN_MAP = {
     "debit - measured": "flow",
     "flow - measured": "flow",
     "total flow": "tflow",
+
     "turbidity - measured": "turb",
+    "turbidit - measured": "turb",
 
     "tss - measured": "tss",
     "tsseq - measured": "tss",
@@ -77,6 +81,8 @@ COLUMN_MAP = {
     "no3eq - measured": "no3",
 
     "temperature - measured": "wtemp",
+    "temperat - measured": "wtemp",
+
     "wpress - measured": "wpress",
     
 
