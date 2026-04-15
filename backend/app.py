@@ -251,17 +251,8 @@ def manual_send():
     try:
         from send import send_dlh, send_has
         
-        # Get date from request or use today
-        data = request.get_json() or {}
-        send_date = data.get('date')
-        
-        if send_date:
-            try:
-                send_date = datetime.fromisoformat(send_date)
-            except:
-                send_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        else:
-            send_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        send_date = datetime.now()
+        send_date_str = send_date.strftime("%Y-%m-%d %H:%M:%S")
         
         results = {
             'dlh_sent': False,
@@ -273,7 +264,7 @@ def manual_send():
         
         # Send to DLH
         try:
-            dlh_result = send_dlh(send_date)
+            dlh_result = send_dlh(send_date_str)
             results['dlh_sent'] = dlh_result
             results['dlh_message'] = 'Data DLH berhasil dikirim' if dlh_result else 'Tidak ada data untuk dikirim ke DLH'
         except Exception as e:
@@ -283,7 +274,7 @@ def manual_send():
         
         # Send to HAS
         try:
-            has_result = send_has(send_date)
+            has_result = send_has(send_date_str)
             results['has_sent'] = has_result
             results['has_message'] = 'Data HAS berhasil dikirim' if has_result else 'Tidak ada data untuk dikirim ke HAS'
         except Exception as e:
