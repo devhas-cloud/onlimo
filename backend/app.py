@@ -252,7 +252,6 @@ def manual_send():
         from send import send_dlh, send_has
         
         send_date = datetime.now()
-        send_date_str = send_date.strftime("%Y-%m-%d %H:%M:%S")
         
         results = {
             'dlh_sent': False,
@@ -264,7 +263,7 @@ def manual_send():
         
         # Send to DLH
         try:
-            dlh_result = send_dlh(send_date_str)
+            dlh_result = send_dlh(send_date)
             results['dlh_sent'] = dlh_result
             results['dlh_message'] = 'Data DLH berhasil dikirim' if dlh_result else 'Tidak ada data untuk dikirim ke DLH'
         except Exception as e:
@@ -274,7 +273,7 @@ def manual_send():
         
         # Send to HAS
         try:
-            has_result = send_has(send_date_str)
+            has_result = send_has(send_date)
             results['has_sent'] = has_result
             results['has_message'] = 'Data HAS berhasil dikirim' if has_result else 'Tidak ada data untuk dikirim ke HAS'
         except Exception as e:
