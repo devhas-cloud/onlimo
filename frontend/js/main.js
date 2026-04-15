@@ -240,7 +240,6 @@ function formatFieldValue(value, fieldName) {
     // Numeric fields
     if (typeof value === 'number' || !isNaN(parseFloat(value))) {
         const numVal = parseFloat(value);
-        if (value === 0 || numVal === 0) return '-';
         return numVal.toFixed(2);
     }
     
