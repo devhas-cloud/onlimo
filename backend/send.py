@@ -18,7 +18,7 @@ def write_log(message):
 # Global configuration parameters
 def initConfig():
     """Initialize global configuration from config.db"""
-    global DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID, HAS_STATUS, HAS_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID
+    global DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID, HAS_STATUS, HAS_API_URL, HAS_LOG_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID
     
     try:
         config = loadConfig()
@@ -32,6 +32,7 @@ def initConfig():
 
         HAS_STATUS = config.get('has_status', 'inactive')
         HAS_API_URL = config.get('has_api_url', '')
+        HAS_LOG_API_URL = config.get('has_log_api_url', '')
         HAS_TOKEN_API = config.get('has_token_api', '')
         
         # Parse HAS_FIELDS safely
@@ -64,7 +65,7 @@ if not initConfig():
 
 def refreshConfig():
     """Refresh configuration from config.db - useful for dynamic reloading"""
-    global  DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID,  HAS_STATUS, HAS_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID
+    global  DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID,  HAS_STATUS, HAS_API_URL, HAS_LOG_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID
     
     
     if not initConfig():
@@ -162,15 +163,18 @@ def send_dlh(dateNow):
                     UpdateDataDlh(row_date, 1, response.text, now_str)
                 else:
                     write_log(f"❌ Gagal Kirim: {response.text}")
+                    send_logs(f"Gagal Kirim DLH API: {row_date} - {statusCode} {statusDesc}")
                     UpdateDataDlh(row_date, 0, f"{response.text}", now_str)
 
             except requests.Timeout:
                 write_log("❌ Timeout DLH API")
                 UpdateDataDlh(row_date, 0, "Timeout", now_str)
+                send_logs(f"Timeout DLH API: {row_date}")
 
             except requests.RequestException as e:
                 write_log(f"❌ Request error: {e}")
                 UpdateDataDlh(row_date, 0, f"RequestException: {e}", now_str)
+                send_logs(f"Request error DLH API: {row_date} - {e}")
 
         except Exception as e:
             write_log(f"❌ Error proses row: {e}")
@@ -247,6 +251,49 @@ def send_has(dateNow):
         write_log(f"❌ Unexpected error saat mengirim ke HAS: {e}")
         traceback.print_exc()
         return False
+    
+
+def send_logs(message):
+
+    global HAS_LOG_API_URL, HAS_TOKEN_API, DEVICE_ID
+
+    """
+        Kirim log ke server API
+
+        :param category: network | connection | sensor
+        :param message: pesan log
+        :param action: default unaction
+        :return: bool
+    """
+    headers = {
+        "X-API-Key": HAS_TOKEN_API,
+        "Content-Type": "application/json"
+    }
+      
+
+    payload = {
+        "device_id": DEVICE_ID,
+        "category": "network",
+        "message": message,
+        "action": 'unaction'
+    }
+
+    try:
+        response = requests.post(HAS_LOG_API_URL, headers=headers, json=payload, timeout=10)
+        if response.status_code in [200, 201]:
+            write_log(f"✅ Log berhasil dikirim ke HAS API: {message}")
+            return True
+        else:
+            write_log(f"❌ Gagal mengirim log ke HAS API: {response.status_code} {response.text[:500]}")
+            return False
+    except requests.Timeout:
+        write_log(f"❌ Timeout saat mengirim log ke HAS API")
+        return False
+    except requests.exceptions.RequestException as e:
+        write_log(f"❌ Request error saat mengirim log ke HAS API: {e}")
+        return False
+
+
 
 
 def get_next_run(now):
