@@ -32,7 +32,7 @@ def initConfig():
 
         HAS_STATUS = config.get('has_status', 'inactive')
         HAS_API_URL = config.get('has_api_url', '')
-        HAS_LOG_API_URL = config.get('has_log_api_url', '')
+        HAS_LOG_API_URL = config.get('has_logs_api_url', '')
         HAS_TOKEN_API = config.get('has_token_api', '')
         
         # Parse HAS_FIELDS safely
