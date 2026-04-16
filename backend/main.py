@@ -56,9 +56,12 @@ COLUMN_MAP = {
 
     "nh3n - measured": "nh3n",
     "ammonium - measured": "nh3n",
+    "amonia - measured": "nh3n",
 
     "battery - measured": "battery",
+
     "depth - measured": "depth",
+    'kedalaman - measured': "depth",
 
     "debit - measured": "flow",
     "flow - measured": "flow",
@@ -79,14 +82,17 @@ COLUMN_MAP = {
 
     "no3 - measured": "no3",
     "no3eq - measured": "no3",
+    "nitrat - measured": "no3",
 
     "temperature - measured": "wtemp",
     "temperat - measured": "wtemp",
     "temperature": "wtemp",
+    "suhu - measured": "wtemp",
 
     "wpress - measured": "wpress",
     
 
+     
 
 }
 
