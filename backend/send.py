@@ -270,7 +270,7 @@ def send_has(dateNow):
 
     try:
         write_log(f"📤 Mengirim {len(payload['data'])} record ke HAS API")
-        response = requests.post(HAS_API_URL, headers=headers, json=payload, timeout=(5, 30))
+        response = requests.post(HAS_API_URL, headers=headers, json=payload, timeout=(5, 120))
         
         if response.status_code in [200, 201]:  # 200 OK atau 201 Created
             write_log(f"✅ Data untuk tanggal {date_str} berhasil dikirim ke HAS API.")
