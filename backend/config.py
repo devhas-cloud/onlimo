@@ -317,7 +317,7 @@ def ambilDataHas(fields, date_str):
         conn = sqlite3.connect(CONFIG_DB_PATH)
         cursor = conn.cursor()
         field_str = ", ".join(fields)
-        cursor.execute(f"SELECT `date`, {field_str} FROM data WHERE has = '0' AND strftime('%Y-%m-%d %H:%M', datetime, 'unixepoch') <= '{date_str}'")
+        cursor.execute(f"SELECT {field_str} FROM data WHERE has = '0' AND strftime('%Y-%m-%d %H:%M', datetime, 'unixepoch') <= '{date_str}'")
         rows = cursor.fetchall()
         
         if rows:
