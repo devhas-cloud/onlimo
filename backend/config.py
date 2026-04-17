@@ -317,7 +317,7 @@ def ambilDataHas(fields, date_str):
         conn = sqlite3.connect(CONFIG_DB_PATH)
         cursor = conn.cursor()
         field_str = ", ".join(fields)
-        cursor.execute(f"SELECT {field_str} FROM data WHERE has = '0' AND strftime('%Y-%m-%d %H:%M', datetime, 'unixepoch') <= '{date_str}'")
+        cursor.execute(f"SELECT `date`, {field_str} FROM data WHERE has = '0' AND strftime('%Y-%m-%d %H:%M', datetime, 'unixepoch') <= '{date_str}'")
         rows = cursor.fetchall()
         
         if rows:
@@ -355,14 +355,24 @@ def prosesDataHas(rows, FIELDS):
         recorded_at = None
         timestamp = None
         
+        
+
         # First pass: extract datetime
         for idx, field in enumerate(FIELDS):
             field = field.strip()
             if field == 'datetime':
                 timestamp = row[idx]
-                recorded_at = datetime.fromtimestamp(timestamp).isoformat()
-                break
-        
+                # Default recorded_at adalah datetime bigint, ubah ke timestamp ISO 8601
+                if timestamp:
+                    try:
+                        dt_obj = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+                        timestamp = int(time.mktime(dt_obj.timetuple()))
+                        recorded_at = dt_obj.isoformat() + "Z"  # Format ISO 8601 dengan timezone Zulu
+                    except Exception as e:
+                        print(f"[ERROR] Gagal parse datetime: {e}")
+            if field == 'date':
+                recorded_at = row[idx]
+             
         # Second pass: create records for each parameter
         for idx, field in enumerate(FIELDS):
             field = field.strip()
