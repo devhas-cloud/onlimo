@@ -378,7 +378,7 @@ def prosesDataHas(rows, FIELDS):
     return data_list
 
 
-def updateDataSentHas(FIELDS, date_str):
+def updateDataSentHas(date_str):
     """Update data yang sudah dikirim dengan has = '1'"""
     try:
         conn = sqlite3.connect(CONFIG_DB_PATH)

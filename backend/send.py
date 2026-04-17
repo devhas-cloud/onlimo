@@ -277,7 +277,7 @@ def send_has(dateNow):
             
             # Update status 'has' di database
             try:
-                update = updateDataSentHas(HAS_FIELDS, date_str)
+                update = updateDataSentHas(date_str)
                 if update:
                     write_log(f"✅ Status 'has' diperbarui untuk data dengan datetime <= {date_str}")
                 else:
