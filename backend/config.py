@@ -317,7 +317,7 @@ def ambilDataHas(fields, date_str):
         conn = sqlite3.connect(CONFIG_DB_PATH)
         cursor = conn.cursor()
         field_str = ", ".join(fields)
-        cursor.execute(f"SELECT {field_str} FROM data WHERE has = '0' AND DATE_FORMAT(FROM_UNIXTIME(datetime), '%Y-%m-%d %H:%i') <= '{date_str}'")
+        cursor.execute(f"SELECT {field_str} FROM data WHERE has = '0' AND strftime('%Y-%m-%d %H:%M', datetime, 'unixepoch') <= '{date_str}'")
         rows = cursor.fetchall()
         
         if rows:
@@ -384,7 +384,7 @@ def updateDataSentHas(date_str):
         conn = sqlite3.connect(CONFIG_DB_PATH)
         cursor = conn.cursor()
         # Update has menjadi '1' untuk data dengan datetime tersebut
-        cursor.execute(f"UPDATE data SET has = '1' WHERE DATE_FORMAT(FROM_UNIXTIME(datetime), '%Y-%m-%d %H:%i') <= '{date_str}'")
+        cursor.execute(f"UPDATE data SET has = '1' WHERE strftime('%Y-%m-%d %H:%M', datetime, 'unixepoch') <= '{date_str}'")
         conn.commit()
         return True
     
