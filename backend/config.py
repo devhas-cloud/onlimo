@@ -1,7 +1,8 @@
 import sqlite3
 import os
 import time
-from datetime import date, datetime
+from datetime import date, datetime, timezone
+from zoneinfo import ZoneInfo
 
 CONFIG_DIR = "../config"
 CONFIG_DB_NAME = "database.db"
@@ -355,24 +356,14 @@ def prosesDataHas(rows, FIELDS):
         recorded_at = None
         timestamp = None
         
-        
-
         # First pass: extract datetime
         for idx, field in enumerate(FIELDS):
             field = field.strip()
             if field == 'datetime':
                 timestamp = row[idx]
-                # Default recorded_at adalah datetime bigint, ubah ke timestamp ISO 8601
-                if timestamp:
-                    try:
-                        dt_obj = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
-                        timestamp = int(time.mktime(dt_obj.timetuple()))
-                        recorded_at = dt_obj.isoformat() + "Z"  # Format ISO 8601 dengan timezone Zulu
-                    except Exception as e:
-                        print(f"[ERROR] Gagal parse datetime: {e}")
-            if field == 'date':
-                recorded_at = row[idx]
-             
+                recorded_at = datetime.fromtimestamp(timestamp, tz=ZoneInfo('Asia/Jakarta')).isoformat()
+                break
+        
         # Second pass: create records for each parameter
         for idx, field in enumerate(FIELDS):
             field = field.strip()
