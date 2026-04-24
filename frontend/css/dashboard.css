@@ -2,6 +2,8 @@
    DASHBOARD SECTION STYLES
    ========================================= */
 
+
+
 /* Statistics Cards Grid */
 .stats-grid {
     display: grid;
@@ -107,63 +109,3 @@
     }
 }
 
-
-/* Container scroll */
-.table-container {
-    max-height: 600px;
-    overflow: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-/* Table basic */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px; /* supaya bisa horizontal scroll kalau sempit */
-}
-
-/* Header sticky */
-.table thead th {
-    position: sticky;
-    top: 0;
-    background: #ffffff;
-    z-index: 3;
-    text-align: center;
-    font-weight: 600;
-    padding: 10px;
-    border-bottom: 2px solid #ddd;
-}
-
-/* Body */
-.table tbody td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #eee;
-    text-align: center;
-}
-
-/* Zebra biar enak dibaca */
-.table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-/* Hover effect */
-.table tbody tr:hover {
-    background-color: #f1f7ff;
-}
-
-/* Loading center */
-.text-center {
-    text-align: center;
-}
-
-/* Scrollbar (opsional, biar modern) */
-.table-container::-webkit-scrollbar {
-    height: 8px;
-    width: 8px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-}
