@@ -43,22 +43,22 @@ def initConfig():
         
         # Validate critical config values
         if DLH_STATUS == 'active' and not all([DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID]):
-            write_log(f"⚠️ DLH API configuration incomplete. Some values are missing.")
+            write_log(f"DLH API configuration incomplete. Some values are missing.")
         
         if HAS_STATUS == 'active' and not all([HAS_API_URL, HAS_TOKEN_API, HAS_FIELDS]):
-            write_log(f"⚠️ HAS API configuration incomplete. Some values are missing.")
+            write_log(f"HAS API configuration incomplete. Some values are missing.")
     
         return True
         
     except Exception as e:
-        write_log(f"❌ Error saat inisialisasi konfigurasi: {e}")
+        write_log(f" Error saat inisialisasi konfigurasi: {e}")
         import traceback
         traceback.print_exc()
         return False
 
 # Initialize configuration at startup
 if not initConfig():
-    write_log("⚠️ Konfigurasi awal gagal, melanjutkan dengan nilai default...")
+    write_log("Konfigurasi awal gagal, melanjutkan dengan nilai default...")
     # Don't exit, continue with defaults instead
 
 
@@ -69,10 +69,10 @@ def refreshConfig():
     
     
     if not initConfig():
-        write_log(f"⚠️ Gagal me-refresh konfigurasi")
+        write_log(f"Gagal me-refresh konfigurasi")
         return False
     
-    write_log(f"✅ Konfigurasi berhasil dimuat ulang dari config.db")
+    write_log(f"Konfigurasi berhasil dimuat ulang dari config.db")
     return True
 
 
@@ -107,19 +107,19 @@ def send_logs(message):
     try:
         response = requests.post(HAS_LOG_API_URL, headers=headers, json=payload, timeout=10)
         if response.status_code in [200, 201]:
-            write_log(f"✅ Log berhasil dikirim ke HAS API: {message}")
+            write_log(f"Log berhasil dikirim ke HAS API: {message}")
             return True
         else:
-            write_log(f"❌ Gagal mengirim log ke HAS API: {response.status_code} {response.text[:500]}")
+            write_log(f" Gagal mengirim log ke HAS API: {response.status_code} {response.text[:500]}")
             return False
     except requests.Timeout:
-        write_log(f"❌ Timeout saat mengirim log ke HAS API")
+        write_log(f" Timeout saat mengirim log ke HAS API")
         return False
     except requests.exceptions.RequestException as e:
-        write_log(f"❌ Request error saat mengirim log ke HAS API: {e}")
+        write_log(f" Request error saat mengirim log ke HAS API: {e}")
         return False
     except Exception as e:
-        write_log(f"❌ Unexpected error saat mengirim log ke HAS API: {e}")
+        write_log(f" Unexpected error saat mengirim log ke HAS API: {e}")
         traceback.print_exc()
         return False
 
@@ -132,11 +132,11 @@ def send_dlh(dateNow):
     global DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID
 
     if DLH_STATUS != 'active':
-        write_log("⚠️ DLH API tidak aktif")
+        write_log("DLH API tidak aktif")
         return False
     
     if not all([DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID]):
-        write_log(f"❌ Konfigurasi DLH tidak lengkap. URL: {bool(DLH_API_URL)}, Key: {bool(DLH_API_KEY)}, Secret: {bool(DLH_API_SECRET)}, UID: {bool(DLH_UID)}")
+        write_log(f" Konfigurasi DLH tidak lengkap. URL: {bool(DLH_API_URL)}, Key: {bool(DLH_API_KEY)}, Secret: {bool(DLH_API_SECRET)}, UID: {bool(DLH_UID)}")
         return False
 
     fields = ["date", "wtemp", "tds", "do", "ph", "turb", "depth", "no3", "nh3n", "cod", "bod", "tss"]
@@ -144,12 +144,12 @@ def send_dlh(dateNow):
     try:
         data_rows = ambilDataDlh(fields, dateNow)
     except Exception as e:
-        write_log(f"❌ Error ambil data DLH: {e}")
+        write_log(f" Error ambil data DLH: {e}")
         traceback.print_exc()
         return False
     
     if not data_rows:
-        write_log(f"ℹ️ Tidak ada data untuk {dateNow}")
+        write_log(f"Tidak ada data untuk {dateNow}")
         return False
 
     url = DLH_API_URL
@@ -159,7 +159,7 @@ def send_dlh(dateNow):
         try:
             # ✅ Validasi panjang row
             if len(row) < len(fields):
-                write_log(f"❌ Data row tidak lengkap: {row}")
+                write_log(f" Data row tidak lengkap: {row}")
                 continue
 
             row_date = row[0]
@@ -169,7 +169,7 @@ def send_dlh(dateNow):
                 try:
                     row_date = datetime.fromisoformat(row_date)
                 except Exception:
-                    write_log(f"❌ Format tanggal invalid: {row_date}")
+                    write_log(f" Format tanggal invalid: {row_date}")
                     continue
 
             tanggal = row_date.strftime("%Y-%m-%d")
@@ -264,11 +264,11 @@ def send_has(dateNow):
     try:
         # Ambil dan proses data
         data_rows = ambilDataHas(HAS_FIELDS, date_str)
-        write_log(f"📥 Mengambil data HAS: {len(data_rows) if data_rows else 0} baris")
+        write_log(f"Mengambil data HAS: {len(data_rows) if data_rows else 0} baris")
         
         payloadData = prosesDataHas(data_rows, HAS_FIELDS) if data_rows else []
     except Exception as e:
-        write_log(f"❌ Error saat mengambil/memproses data HAS: {e}")
+        write_log(f" Error saat mengambil/memproses data HAS: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -280,37 +280,37 @@ def send_has(dateNow):
     }
 
     if not payload["data"]:
-        write_log(f"ℹ️ Tidak ada data baru untuk dikirim ke HAS API pada tanggal {date_str}.")
+        write_log(f"Tidak ada data baru untuk dikirim ke HAS API pada tanggal {date_str}.")
         return False
 
     try:
-        write_log(f"📤 Mengirim {len(payload['data'])} record ke HAS API")
+        write_log(f"Mengirim {len(payload['data'])} record ke HAS API")
         response = requests.post(HAS_API_URL, headers=headers, json=payload, timeout=(5, 120))
         
         if response.status_code in [200, 201]:  # 200 OK atau 201 Created
-            write_log(f"✅ Data untuk tanggal {date_str} berhasil dikirim ke HAS API.")
+            write_log(f"Data untuk tanggal {date_str} berhasil dikirim ke HAS API.")
             
             # Update status 'has' di database
             try:
                 update = updateDataSentHas(date_str)
                 if update:
-                    write_log(f"✅ Status 'has' diperbarui untuk data dengan datetime <= {date_str}")
+                    write_log(f"Status 'has' diperbarui untuk data dengan datetime <= {date_str}")
                 else:
-                    write_log(f"⚠️ Gagal memperbarui status 'has' untuk data dengan datetime <= {date_str}")
+                    write_log(f"Gagal memperbarui status 'has' untuk data dengan datetime <= {date_str}")
             except Exception as ue:
-                write_log(f"❌ Error saat update status HAS: {ue}")
+                write_log(f"Error saat update status HAS: {ue}")
             return True
         else:
-            write_log(f"❌ HAS API error {response.status_code}: {response.text[:500]}")
+            write_log(f"HAS API error {response.status_code}: {response.text[:500]}")
             return False
     except requests.Timeout:
-        write_log(f"❌ Timeout saat mengirim ke HAS API")
+        write_log(f" Timeout saat mengirim ke HAS API")
         return False
     except requests.RequestException as e:
-        write_log(f"❌ Request error ke HAS API: {e}")
+        write_log(f" Request error ke HAS API: {e}")
         return False
     except Exception as e:
-        write_log(f"❌ Unexpected error saat mengirim ke HAS: {e}")
+        write_log(f" Unexpected error saat mengirim ke HAS: {e}")
         traceback.print_exc()
         return False
     
@@ -336,10 +336,10 @@ def scheduler():
 
             # Safety: anti negatif
             if sleep_seconds < 0:
-                write_log("⚠️ Waktu sudah lewat, langsung eksekusi")
+                write_log("Waktu sudah lewat, langsung eksekusi")
                 sleep_seconds = 0
 
-            write_log(f"⏳ Next run: {next_run} (sleep {sleep_seconds:.2f}s)")
+            write_log(f"Next run: {next_run} (sleep {sleep_seconds:.2f}s)")
 
             # Sleep bertahap (biar bisa interrupt & lebih stabil)
             while sleep_seconds > 0:
@@ -351,16 +351,16 @@ def scheduler():
             exec_time = datetime.now()
             DATE = exec_time.replace(second=0, microsecond=0)
 
-            write_log(f"⏰ Eksekusi pada: {exec_time}")
+            write_log(f"Eksekusi pada: {exec_time}")
 
             # ======================
             # REFRESH CONFIG
             # ======================
             try:
                 if not refreshConfig():
-                    write_log("⚠️ Gagal refresh config, pakai sebelumnya")
+                    write_log("Gagal refresh config, pakai sebelumnya")
             except Exception as e:
-                write_log(f"❌ Error refresh config: {e}")
+                write_log(f"Error refresh config: {e}")
                 traceback.print_exc()
 
             # ======================
@@ -368,12 +368,12 @@ def scheduler():
             # ======================
             try:
                 if DLH_STATUS == 'active':
-                    write_log("📨 Kirim DLH...")
+                    write_log("Kirim DLH...")
                     send_dlh(DATE)
                 else:
-                    write_log("⚠️ DLH tidak aktif")
+                    write_log("DLH tidak aktif")
             except Exception as e:
-                write_log(f"❌ Error send_dlh: {e}")
+                write_log(f"Error send_dlh: {e}")
                 traceback.print_exc()
 
             # ======================
@@ -381,12 +381,12 @@ def scheduler():
             # ======================
             try:
                 if HAS_STATUS == 'active':
-                    write_log("📨 Kirim HAS...")
+                    write_log("Kirim HAS...")
                     send_has(DATE)
                 else:
-                    write_log("⚠️ HAS tidak aktif")
+                    write_log("HAS tidak aktif")
             except Exception as e:
-                write_log(f"❌ Error send_has: {e}")
+                write_log(f"Error send_has: {e}")
                 traceback.print_exc()
 
             # ======================
@@ -394,15 +394,15 @@ def scheduler():
             # ======================
             actual_delay = (datetime.now() - next_run).total_seconds()
             if actual_delay > 5:
-                write_log(f"⚠️ Eksekusi terlambat {actual_delay:.2f} detik")
+                write_log(f"Eksekusi terlambat {actual_delay:.2f} detik")
 
     except KeyboardInterrupt:
-        write_log("🛑 Scheduler dihentikan user")
+        write_log("Scheduler dihentikan user")
     except Exception as e:
-        write_log(f"❌ Fatal error: {e}")
+        write_log(f"Fatal error: {e}")
         traceback.print_exc()
     finally:
-        write_log("🏁 Scheduler berhenti")
+        write_log("Scheduler berhenti")
 
 
 if __name__ == "__main__":
