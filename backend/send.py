@@ -197,11 +197,26 @@ def send_dlh(dateNow):
                 "apisecret": DLH_API_SECRET
             }
 
-            write_log(f"📤 Mengirim DLH: {tanggal} {jam}")
+            write_log(f"Mengirim DLH: {tanggal} {jam}")
 
             try:
                 response = requests.post(url, json=dataJson, headers=headers, timeout=(5, 10))
-                json_response = response.json()
+                
+                # Validasi response kosong
+                if not response.text:
+                    write_log(f"DLH API returned empty response")
+                    send_logs(f"DLH API response empty: {row_date} - {response.text}")
+                    UpdateDataDlh(row_date, 0, response.text, now_str)
+                    continue
+                
+                try:
+                    json_response = response.json()
+                except json.JSONDecodeError as je:
+                    write_log(f"Invalid JSON response from DLH API: {response.text}")
+                    send_logs(f"DLH API invalid JSON: {row_date} - {response.text}")
+                    UpdateDataDlh(row_date, 0, f"Invalid JSON: {response.text}", now_str)
+                    continue
+                
                 statusCode = json_response.get("status", {}).get("statusCode")
                 statusDesc = json_response.get("status", {}).get("statusDesc", "No description")
 
@@ -209,22 +224,22 @@ def send_dlh(dateNow):
                     write_log(f"Sukses DLH: {json_response}")
                     UpdateDataDlh(row_date, 1, response.text, now_str)
                 else:
-                    write_log(f"❌ Gagal Kirim: {response.text}")
+                    write_log(f"Gagal Kirim: {response.text}")
                     send_logs(f"Gagal Kirim DLH API: {row_date} - {statusCode} {statusDesc}")
                     UpdateDataDlh(row_date, 0, f"{response.text}", now_str)
 
             except requests.Timeout:
-                write_log("❌ Timeout DLH API")
+                write_log("Timeout DLH API")
                 UpdateDataDlh(row_date, 0, "Timeout", now_str)
                 send_logs(f"Timeout DLH API: {row_date}")
 
             except requests.RequestException as e:
-                write_log(f"❌ Request error: {e}")
+                write_log(f"Request error: {e}")
                 UpdateDataDlh(row_date, 0, f"RequestException: {e}", now_str)
                 send_logs(f"Request error DLH API: {row_date} - {e}")
 
         except Exception as e:
-            write_log(f"❌ Error proses row: {e}")
+            write_log(f"Error proses row: {e}")
             traceback.print_exc()
             continue
 
