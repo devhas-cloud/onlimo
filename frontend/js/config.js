@@ -91,6 +91,10 @@ async function saveConfiguration() {
                 has_token_api: document.getElementById('config-has-token-api')?.value || '',
                 has_fields: document.getElementById('config-has-fields')?.value || '',
                 has_logs_api_url: document.getElementById('config-has-logs-api-url')?.value || '',
+                
+                // Run Minutes
+                run_minutes: document.getElementById('config-run-minutes')?.value || '5,10,15'
+
             };
             
             console.log('Sending config data:', configData);

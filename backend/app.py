@@ -177,7 +177,7 @@ def get_stats():
                 'pending_data': pending_data,
                 'sent_dlh': sent_dlh,
                 'sent_has': sent_has,
-                'dlh_sent_at': dlh_sent_at  # Placeholder, bisa diisi dengan timestamp terakhir data dikirim ke DLH
+                'dlh_sent_at': dlh_sent_at  # Placeholder, bisa diisi dengan timestamp terakhir data dikirim ke DLH            
             }
         }), 200
     

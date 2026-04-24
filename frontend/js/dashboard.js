@@ -44,6 +44,7 @@ async function loadAllData() {
     // Build Table Headers
     const headerHtml = [
       '<th>No</th>',
+      '<th>Create At</th>',
       '<th>Tanggal</th>',
       ...dashParams.map(field => `<th>${getFieldDisplayName(field)}</th>`),
       '<th>DLH</th>',
@@ -56,7 +57,7 @@ async function loadAllData() {
     let bodyHtml = '';
 
     if (data.data.length === 0) {
-      const colSpan = dashParams.length + 4;
+      const colSpan = dashParams.length + 5;
       bodyHtml = `<tr><td colspan="${colSpan}" class="text-center text-muted">Tidak ada data pada rentang tanggal ini</td></tr>`;
     } else {
       bodyHtml = data.data.map((row, idx) => {
@@ -77,9 +78,12 @@ async function loadAllData() {
           ? formatDateCustom(new Date(row.dlh_sent_at)) 
           : '-';
 
+        const createAt = row.create_at ? formatDateCustom(new Date(row.create_at)) : '-';
+
         return `
           <tr>
             <td>${idx + 1}</td>
+            <td>${createAt}</td>
             <td>${tanggal}</td>
             ${paramsHtml}
             <td>${dlhBadge}</td>

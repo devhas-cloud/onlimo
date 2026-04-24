@@ -18,7 +18,7 @@ def write_log(message):
 # Global configuration parameters
 def initConfig():
     """Initialize global configuration from config.db"""
-    global DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID, HAS_STATUS, HAS_API_URL, HAS_LOG_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID
+    global DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID, HAS_STATUS, HAS_API_URL, HAS_LOG_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID, RUN_MINUTES
     
     try:
         config = loadConfig()
@@ -34,12 +34,15 @@ def initConfig():
         HAS_API_URL = config.get('has_api_url', '')
         HAS_LOG_API_URL = config.get('has_logs_api_url', '')
         HAS_TOKEN_API = config.get('has_token_api', '')
+
+        RUN_MINUTES = [int(x) for x in config.get('run_minutes', '5,10,15').split(',') if x.isdigit()]  # fleksibel, bisa diubah dari config
         
         # Parse HAS_FIELDS safely
         has_fields_str = config.get('has_fields', '')
         HAS_FIELDS = [field.strip() for field in has_fields_str.split(',') if field.strip()] if has_fields_str else []
 
         DEVICE_ID = config.get('device_id', 'UNKNOWN')
+
         
         # Validate critical config values
         if DLH_STATUS == 'active' and not all([DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID]):
@@ -65,7 +68,7 @@ if not initConfig():
 
 def refreshConfig():
     """Refresh configuration from config.db - useful for dynamic reloading"""
-    global  DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID,  HAS_STATUS, HAS_API_URL, HAS_LOG_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID
+    global  DLH_STATUS, DLH_API_URL, DLH_API_KEY, DLH_API_SECRET, DLH_UID,  HAS_STATUS, HAS_API_URL, HAS_LOG_API_URL, HAS_TOKEN_API, HAS_FIELDS, DEVICE_ID, RUN_MINUTES
     
     
     if not initConfig():
@@ -316,40 +319,47 @@ def send_has(dateNow):
     
 
 
-def get_next_run(now):
-    """Hitung waktu eksekusi berikutnya (HH:00:10)"""
-    next_run = now.replace(minute=0, second=10, microsecond=0)
-    if now >= next_run:
-        next_run += timedelta(hours=1)
-    return next_run
+def get_next_run(now, run_minutes):
+    run_minutes = sorted(run_minutes)
+
+    for m in run_minutes:
+        if m > now.minute:
+            return now.replace(minute=m, second=0, microsecond=0)
+
+    # kalau sudah lewat semua → ke jam berikutnya
+    next_hour = now + timedelta(hours=1)
+    return next_hour.replace(minute=run_minutes[0], second=0, microsecond=0)
 
 
 def scheduler():
-    write_log("🚀 Scheduler dimulai (interval: setiap jam detik ke-10)")
+    write_log(f"🚀 Scheduler dimulai (menit: {RUN_MINUTES})")
+
+    last_run = None  # proteksi double eksekusi
 
     try:
         while True:
             now = datetime.now()
-            next_run = get_next_run(now)
+            next_run = get_next_run(now, RUN_MINUTES)
 
             sleep_seconds = (next_run - now).total_seconds()
 
-            # Safety: anti negatif
             if sleep_seconds < 0:
-                write_log("Waktu sudah lewat, langsung eksekusi")
                 sleep_seconds = 0
 
             write_log(f"Next run: {next_run} (sleep {sleep_seconds:.2f}s)")
 
-            # Sleep bertahap (biar bisa interrupt & lebih stabil)
+            # sleep bertahap
             while sleep_seconds > 0:
-                chunk = min(sleep_seconds, 60)  # max tidur 60 detik
+                chunk = min(sleep_seconds, 60)
                 time.sleep(chunk)
                 sleep_seconds -= chunk
 
-            # Timestamp eksekusi (dibulatkan ke menit)
-            exec_time = datetime.now()
-            DATE = exec_time.replace(second=0, microsecond=0)
+            exec_time = datetime.now().replace(second=0, microsecond=0)
+
+            # proteksi supaya tidak jalan 2x di menit yang sama
+            if last_run == exec_time:
+                continue
+            last_run = exec_time
 
             write_log(f"Eksekusi pada: {exec_time}")
 
@@ -369,7 +379,7 @@ def scheduler():
             try:
                 if DLH_STATUS == 'active':
                     write_log("Kirim DLH...")
-                    send_dlh(DATE)
+                    send_dlh(exec_time)
                 else:
                     write_log("DLH tidak aktif")
             except Exception as e:
@@ -382,7 +392,7 @@ def scheduler():
             try:
                 if HAS_STATUS == 'active':
                     write_log("Kirim HAS...")
-                    send_has(DATE)
+                    send_has(exec_time)
                 else:
                     write_log("HAS tidak aktif")
             except Exception as e:
@@ -390,11 +400,11 @@ def scheduler():
                 traceback.print_exc()
 
             # ======================
-            # PROTEKSI DRIFT (optional tapi penting)
+            # PROTEKSI DRIFT
             # ======================
             actual_delay = (datetime.now() - next_run).total_seconds()
             if actual_delay > 5:
-                write_log(f"Eksekusi terlambat {actual_delay:.2f} detik")
+                write_log(f"Terlambat {actual_delay:.2f} detik")
 
     except KeyboardInterrupt:
         write_log("Scheduler dihentikan user")

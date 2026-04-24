@@ -42,6 +42,8 @@ def defaultConfig():
             has_logs_api_url TEXT,
             has_token_api TEXT,
             has_fields TEXT,
+            
+            run_minutes TEXT,
 
 
             -- device info
@@ -71,8 +73,8 @@ def defaultConfig():
             "has_logs_api_url": "https://api.hasportal.com/api/v1/logs",
             "has_token_api": "",
             "has_fields": "datetime,pH,cod,tss,nh3n,flow,wtemp,orp,turb,tds,conduct,do,depth,bod,wpress",
+            "run_minutes": "5,10,15",
 
-     
             # device info
             "device_id": "HSP-xxxxxx",
             "location_name": "PT. Has Environmental",
@@ -173,6 +175,16 @@ def cek_table():
         )
         """)
     conn.commit()
+
+    # tambahkan create_at jika belum ada, jika sudah ada, jangan buat lagi
+    cursor.execute("PRAGMA table_info(data)")
+    columns = [col[1] for col in cursor.fetchall()]
+    if 'create_at' not in columns:
+        cursor.execute("ALTER TABLE data ADD COLUMN create_at DATETIME DEFAULT CURRENT_TIMESTAMP")
+        conn.commit()
+
+
+
     cursor.close()
     conn.close()
 
