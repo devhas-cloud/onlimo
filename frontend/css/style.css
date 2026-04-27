@@ -208,13 +208,15 @@
     box-shadow: var(--shadow-sm, 0 2px 6px rgba(0,0,0,0.05));
     max-height: 600px;
     overflow: auto;
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Wrapper supaya bisa scroll horizontal */
 .table-responsive {
     width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
 }
 
 /* Table basic */
@@ -234,7 +236,7 @@
 .table thead th {
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 10;
     padding: 12px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -242,7 +244,7 @@
     letter-spacing: 0.05em;
     color: var(--text-muted, #666);
     text-align: center;
-    background: #fff;
+    background: #f8fafc;
     border-bottom: 2px solid var(--border, #ddd);
     white-space: nowrap;
 }

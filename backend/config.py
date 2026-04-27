@@ -180,7 +180,7 @@ def cek_table():
     cursor.execute("PRAGMA table_info(data)")
     columns = [col[1] for col in cursor.fetchall()]
     if 'create_at' not in columns:
-        cursor.execute("ALTER TABLE data ADD COLUMN create_at DATETIME DEFAULT CURRENT_TIMESTAMP")
+        cursor.execute("ALTER TABLE data ADD COLUMN create_at DATETIME")
         conn.commit()
 
 
@@ -242,6 +242,7 @@ def insert_data(date, datetime_val, ph, orp, tds, conduct, do, salinity, nh3n, b
     cek_table()
 
     device = loadConfig()['device_id']
+    create_at = ambilDateAll()
 
     # Cek apakah data dengan device dan date yang sama sudah ada
     if check_duplicate_data(device, date):
@@ -250,8 +251,8 @@ def insert_data(date, datetime_val, ph, orp, tds, conduct, do, salinity, nh3n, b
     
     query = """
         INSERT INTO data (device, date, datetime, pH, orp, tds, conduct, do, salinity, nh3n, battery, depth, flow, tflow,
-                          turb, tss, cod, bod, no3, wtemp, wpress)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                          turb, tss, cod, bod, no3, wtemp, wpress, create_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         
     try:
@@ -260,7 +261,7 @@ def insert_data(date, datetime_val, ph, orp, tds, conduct, do, salinity, nh3n, b
 
         values = (
             device, date, datetime_val, ph, orp, tds, conduct, do, salinity, nh3n, battery, depth, flow, tflow,
-            turb, tss, cod, bod, no3, wtemp, wpress
+            turb, tss, cod, bod, no3, wtemp, wpress, create_at
         )
         
         cursor.execute(query, values)

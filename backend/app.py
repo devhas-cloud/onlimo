@@ -79,6 +79,8 @@ def get_config():
         'has_logs_api_url': config.get('has_logs_api_url', ''),
         'has_token_api': config.get('has_token_api', ''),
         'has_fields': config.get('has_fields', ''),
+
+        'run_minutes': config.get('run_minutes', '5,10,15'),
         
         
         # device info
