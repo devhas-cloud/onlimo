@@ -35,7 +35,7 @@ def initConfig():
         HAS_LOG_API_URL = config.get('has_logs_api_url', '')
         HAS_TOKEN_API = config.get('has_token_api', '')
 
-        RUN_MINUTES = [int(x) for x in config.get('run_minutes', '5,10,15').split(',') if x.isdigit()]  # fleksibel, bisa diubah dari config
+        RUN_MINUTES = [int(x) for x in config.get('run_minutes', '0,10,20').split(',') if x.isdigit()]  # fleksibel, bisa diubah dari config
         
         # Parse HAS_FIELDS safely
         has_fields_str = config.get('has_fields', '')
